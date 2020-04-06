@@ -38,8 +38,24 @@
 
         check_long_mode_with_cpuid:
             pusha                                   ; Save all general purpose registers on the stack
-
                   ; This function need to be written by you.
+                mov eax,0x80000000 ; cpuid function to determine the largest function number
+                cpuid
+                cmp eax,0x80000001 ; If the largest function number is less than 0x80000001 then it is not supported
+                jl .long_mode_not_supported ; Error and hang
+                mov eax,0x80000001 ; Else invoke cpuid function 0x80000001 to get the processor extended features bits (EDX).
+                cpuid
+                and edx,0x20000000 ; Mask out all bits in edx except bit # 29 which is the Long Mode LM-bit
+                cmp edx,0 ; if edx is zero them LM-bit is not set
+                je .long_mode_not_supported ; If Long mode is not supported then we need to print a message and stop
+                mov si,long_mode_supported_msg ; Else print a message indicating the long mode is supported
+                call bios_print
+                jmp .exit_check_long_mode_with_cpuid ; Skip over the long mode not supported section
+                .long_mode_not_supported:
+                mov si,long_mode_not_supported_msg ; If we are here then long mode is not supported
+                call bios_print ; Print an error message and jump to hang
+                jmp hang
+                .exit_check_long_mode_with_cpuid:
 
             popa                                ; Restore all general purpose registers from the stack
             ret
