@@ -4,10 +4,10 @@
 %define PAGE_PRESENT_WRITE 0x3  ; 011b
 %define MEM_PAGE_4K         0x1000
 
-build_page_table:
-    pusha                                   ; Save all general purpose registers on the stack
+;build_page_table:
+    ;pusha                                   ; Save all general purpose registers on the stack
 
             ; This function need to be written by you.
 
-    popa                                ; Restore all general purpose registers from the stack
-    ret
+   ; popa                                ; Restore all general purpose registers from the stack
+    ;ret
